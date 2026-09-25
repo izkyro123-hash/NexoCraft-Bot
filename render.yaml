@@ -1,0 +1,29 @@
+services:
+  - type: worker
+    name: nexocraft-bot
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: DISCORD_TOKEN
+        sync: false
+      - key: CLIENT_ID
+        sync: false
+      - key: GUILD_ID
+        sync: false
+      - key: WELCOME_CHANNEL_ID
+        sync: false
+      - key: GOODBYE_CHANNEL_ID
+        sync: false
+      - key: MOD_LOG_CHANNEL_ID
+        sync: false
+      - key: TICKET_CATEGORY_ID
+        sync: false
+      - key: TICKET_SUPPORT_ROLE_ID
+        sync: false
+      - key: LOG_CHANNEL_ID
+        sync: false
+      - key: MINECRAFT_HOST
+        sync: false
+      - key: MINECRAFT_PORT
+        value: "25565"
