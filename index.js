@@ -9,8 +9,8 @@ const ready = require("./events/ready");
 const memberEvents = require("./events/member");
 const handleInteraction = require("./events/interactions");
 
-if (!config.token || !config.clientId || !config.guildId) {
-  console.error("❌ Faltan DISCORD_TOKEN, CLIENT_ID o GUILD_ID.");
+if (!config.token || !config.clientId) {
+  console.error("❌ Faltan DISCORD_TOKEN o CLIENT_ID en las variables de entorno.");
   process.exit(1);
 }
 
@@ -25,7 +25,7 @@ client.once("ready", async () => {
   try {
     await ready(client, config, commandData);
   } catch (error) {
-    console.error("❌ Error registrando comandos:", error);
+    console.error("❌ Error registrando comandos globales:", error);
   }
 });
 
