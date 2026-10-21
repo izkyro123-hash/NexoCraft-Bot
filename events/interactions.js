@@ -39,7 +39,7 @@ module.exports = async function handleInteraction(interaction, context) {
         "Logs: " + (c.modLogChannelId ? "<#" + c.modLogChannelId + ">" : "No configurado"),
         "Categoría de tickets: " + (c.ticketCategoryId ? "<#" + c.ticketCategoryId + ">" : "No configurado"),
         "Rol de soporte: " + (c.ticketSupportRoleId ? "<@&" + c.ticketSupportRoleId + ">" : "No configurado")
-      ].join("\\n"), ephemeral: true });
+      ].join("\n"), ephemeral: true });
     }
 
     const handler = handlers[interaction.commandName];
@@ -64,7 +64,7 @@ module.exports = async function handleInteraction(interaction, context) {
       if (!member.kickable) return interaction.reply({ content: "❌ No puedo expulsar a ese usuario. Revisa la jerarquía.", ephemeral: true });
       await member.kick(reason);
       await interaction.reply(`👢 **${user.tag}** fue expulsado. Razón: **${reason}**`);
-      return sendLog(interaction.guild, config, "👢 Usuario expulsado", `**Usuario:** ${user.tag} (${user.id})\n**Moderador:** ${interaction.user.tag}\n**Razón:** ${reason}`, 0xed4245);
+      return sendLog(interaction.guild, guildConfig, "👢 Usuario expulsado", `**Usuario:** ${user.tag} (${user.id})\n**Moderador:** ${interaction.user.tag}\n**Razón:** ${reason}`, 0xed4245);
     }
 
     if (interaction.commandName === "timeout") {
@@ -76,7 +76,7 @@ module.exports = async function handleInteraction(interaction, context) {
       if (!member.moderatable) return interaction.reply({ content: "❌ No puedo aplicar timeout a ese usuario.", ephemeral: true });
       await member.timeout(minutes * 60 * 1000, reason);
       await interaction.reply(`⏳ **${user.tag}** recibió timeout durante **${minutes} minutos**.`);
-      return sendLog(interaction.guild, config, "⏳ Timeout aplicado", `**Usuario:** ${user.tag}\n**Moderador:** ${interaction.user.tag}\n**Duración:** ${minutes} min\n**Razón:** ${reason}`, 0xfee75c);
+      return sendLog(interaction.guild, guildConfig, "⏳ Timeout aplicado", `**Usuario:** ${user.tag}\n**Moderador:** ${interaction.user.tag}\n**Duración:** ${minutes} min\n**Razón:** ${reason}`, 0xfee75c);
     }
 
     if (interaction.commandName === "clear") {
@@ -84,7 +84,7 @@ module.exports = async function handleInteraction(interaction, context) {
       await interaction.deferReply({ ephemeral: true });
       const deleted = await interaction.channel.bulkDelete(amount, true);
       await interaction.editReply(`🧹 Eliminados **${deleted.size}** mensajes.`);
-      return sendLog(interaction.guild, config, "🧹 Mensajes eliminados", `**Moderador:** ${interaction.user.tag}\n**Cantidad:** ${deleted.size}`, 0xfee75c);
+      return sendLog(interaction.guild, guildConfig, "🧹 Mensajes eliminados", `**Moderador:** ${interaction.user.tag}\n**Cantidad:** ${deleted.size}`, 0xfee75c);
     }
 
     if (interaction.commandName === "ticket-panel") {
@@ -109,8 +109,9 @@ module.exports = async function handleInteraction(interaction, context) {
 
   if (interaction.customId === "ticket:create") {
     const guild = interaction.guild;
-    const category = config.ticketCategoryId ? guild.channels.cache.get(config.ticketCategoryId) : null;
-    const supportRole = config.ticketSupportRoleId || null;
+    const currentConfig = getGuildConfig(guild.id, config);
+    const category = currentConfig.ticketCategoryId ? guild.channels.cache.get(currentConfig.ticketCategoryId) : null;
+    const supportRole = currentConfig.ticketSupportRoleId || null;
 
     const existing = guild.channels.cache.find(
       c => c.type === ChannelType.GuildText && c.topic === `ticket-owner:${interaction.user.id}`
