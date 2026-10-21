@@ -6,11 +6,42 @@ const {
   ChannelType
 } = require("discord.js");
 const { sendLog } = require("../utils/logger");
+const { getGuildConfig, setGuildConfig } = require("../utils/guildConfig");
 
 module.exports = async function handleInteraction(interaction, context) {
   const { client, config, handlers } = context;
+  const guildConfig = interaction.guild ? getGuildConfig(interaction.guild.id, config) : config;
 
   if (interaction.isChatInputCommand()) {
+    if (interaction.commandName === "configurar") {
+      const patch = {};
+      const welcome = interaction.options.getChannel("bienvenida");
+      const goodbye = interaction.options.getChannel("despedidas");
+      const logs = interaction.options.getChannel("logs");
+      const category = interaction.options.getChannel("categoria_tickets");
+      const support = interaction.options.getRole("rol_soporte");
+      if (welcome) patch.welcomeChannelId = welcome.id;
+      if (goodbye) patch.goodbyeChannelId = goodbye.id;
+      if (logs) patch.modLogChannelId = logs.id;
+      if (category) patch.ticketCategoryId = category.id;
+      if (support) patch.ticketSupportRoleId = support.id;
+      if (!Object.keys(patch).length) return interaction.reply({ content: "Selecciona al menos una opción para guardar. Las opciones omitidas no cambian.", ephemeral: true });
+      setGuildConfig(interaction.guildId, patch);
+      return interaction.reply({ content: "✅ Configuración guardada para **" + interaction.guild.name + "**. Cada servidor tiene su propia configuración.", ephemeral: true });
+    }
+
+    if (interaction.commandName === "configuracion") {
+      const c = getGuildConfig(interaction.guildId, config);
+      return interaction.reply({ content: [
+        "**⚙️ Configuración de este servidor**",
+        "Bienvenida: " + (c.welcomeChannelId ? "<#" + c.welcomeChannelId + ">" : "No configurado"),
+        "Despedidas: " + (c.goodbyeChannelId ? "<#" + c.goodbyeChannelId + ">" : "No configurado"),
+        "Logs: " + (c.modLogChannelId ? "<#" + c.modLogChannelId + ">" : "No configurado"),
+        "Categoría de tickets: " + (c.ticketCategoryId ? "<#" + c.ticketCategoryId + ">" : "No configurado"),
+        "Rol de soporte: " + (c.ticketSupportRoleId ? "<@&" + c.ticketSupportRoleId + ">" : "No configurado")
+      ].join("\\n"), ephemeral: true });
+    }
+
     const handler = handlers[interaction.commandName];
     if (handler) return handler(interaction, client, config);
 
@@ -22,7 +53,7 @@ module.exports = async function handleInteraction(interaction, context) {
       if (!member.bannable) return interaction.reply({ content: "❌ No puedo banear a ese usuario. Revisa la jerarquía.", ephemeral: true });
       await member.ban({ reason });
       await interaction.reply(`🔨 **${user.tag}** fue baneado. Razón: **${reason}**`);
-      return sendLog(interaction.guild, config, "🔨 Usuario baneado", `**Usuario:** ${user.tag} (${user.id})\n**Moderador:** ${interaction.user.tag}\n**Razón:** ${reason}`, 0xed4245);
+      return sendLog(interaction.guild, guildConfig, "🔨 Usuario baneado", `**Usuario:** ${user.tag} (${user.id})\n**Moderador:** ${interaction.user.tag}\n**Razón:** ${reason}`, 0xed4245);
     }
 
     if (interaction.commandName === "kick") {
@@ -130,13 +161,13 @@ module.exports = async function handleInteraction(interaction, context) {
     });
 
     await interaction.reply({ content: `✅ Ticket creado: ${channel}`, ephemeral: true });
-    return sendLog(guild, config, "🎫 Ticket creado", `**Usuario:** ${interaction.user.tag}\n**Canal:** ${channel}`, 0x57f287);
+    return sendLog(guild, getGuildConfig(guild.id, config), "🎫 Ticket creado", `**Usuario:** ${interaction.user.tag}\n**Canal:** ${channel}`, 0x57f287);
   }
 
   if (interaction.customId === "ticket:close") {
     const channel = interaction.channel;
     await interaction.reply("🔒 Cerrando ticket en 5 segundos...");
-    await sendLog(interaction.guild, config, "🔒 Ticket cerrado", `**Canal:** ${channel.name}\n**Cerrado por:** ${interaction.user.tag}`, 0xed4245);
+    await sendLog(interaction.guild, getGuildConfig(interaction.guild.id, config), "🔒 Ticket cerrado", `**Canal:** ${channel.name}\n**Cerrado por:** ${interaction.user.tag}`, 0xed4245);
     setTimeout(() => channel.delete("Ticket cerrado").catch(() => {}), 5000);
   }
 };
