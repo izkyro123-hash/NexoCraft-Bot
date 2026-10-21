@@ -5,6 +5,7 @@ const config = require("./config/config");
 const general = require("./commands/general");
 const moderation = require("./commands/moderation");
 const tickets = require("./commands/tickets");
+const settings = require("./commands/settings");
 const ready = require("./events/ready");
 const memberEvents = require("./events/member");
 const handleInteraction = require("./events/interactions");
@@ -18,7 +19,7 @@ const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers]
 });
 
-const commandData = [...general, ...moderation, ...tickets];
+const commandData = [...general, ...moderation, ...tickets, ...settings];
 const handlers = general.handlers;
 
 client.once("ready", async () => {
