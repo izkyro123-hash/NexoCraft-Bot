@@ -5,6 +5,7 @@ Bot de Discord para **NexoCraft**, preparado para **Node.js 20+** y **Render**.
 ## ✨ Incluye
 
 - Comandos slash registrados automáticamente como **comandos globales**.
+- Configuración independiente por servidor con `/configurar` y `/configuracion`.
 - `/help`, `/ping`, `/serverinfo`, `/userinfo`.
 - Moderación: `/ban`, `/kick`, `/timeout`, `/clear`.
 - Sistema de tickets con botón.
@@ -52,6 +53,12 @@ El bot necesita los permisos adecuados para sus funciones, especialmente:
 - Moderate Members
 
 Para la bienvenida/despedida, activa el intent **Server Members Intent** en el Developer Portal.
+
+## ⚙️ Configurar cada servidor
+
+Como los comandos son globales, puedes invitar el bot a varios servidores y configurar cada uno de forma independiente. En cada servidor, alguien con permiso **Manage Server / Gestionar servidor** debe ejecutar `/configurar` y seleccionar los canales/rol que quiera configurar. Usa `/configuracion` para comprobar los valores guardados. Las opciones que no selecciones al ejecutar `/configurar` no se modifican.
+
+La configuración por servidor se guarda en `data/guild-config.json`. Este almacenamiento local funciona si el hosting conserva los archivos entre reinicios y despliegues. Si el hosting borra el disco al desplegar, configura un disco persistente o cambia el almacenamiento a una base de datos antes de depender de estos ajustes en producción.
 
 ## 🎫 Tickets
 
