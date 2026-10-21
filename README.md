@@ -4,7 +4,7 @@ Bot de Discord para **NexoCraft**, preparado para **Node.js 20+** y **Render**.
 
 ## ✨ Incluye
 
-- Slash commands registrados automáticamente al iniciar.
+- Comandos slash registrados automáticamente como **comandos globales**.
 - `/help`, `/ping`, `/serverinfo`, `/userinfo`.
 - Moderación: `/ban`, `/kick`, `/timeout`, `/clear`.
 - Sistema de tickets con botón.
@@ -16,7 +16,19 @@ Bot de Discord para **NexoCraft**, preparado para **Node.js 20+** y **Render**.
 
 Copia `.env.example` como `.env` para probarlo en local. En Render, agrega las mismas variables en **Environment**.
 
-No subas nunca tu `DISCORD_TOKEN` a GitHub.
+Variables necesarias para iniciar:
+- `DISCORD_TOKEN`: token secreto del bot.
+- `CLIENT_ID`: Application ID del bot en Discord Developer Portal.
+
+`GUILD_ID` ahora es opcional y puede quedar vacío. Los comandos se registran globalmente, así que no se necesita un ID de servidor para registrarlos.
+
+No subas nunca tu `DISCORD_TOKEN` a GitHub ni lo compartas públicamente. Si se expone, restablécelo en Discord Developer Portal.
+
+## 🌍 Comandos globales
+
+El bot registra los comandos mediante la ruta global de Discord. Los comandos podrán usarse en los servidores donde esté invitado el bot y tenga los permisos necesarios.
+
+**Importante:** después del primer despliegue, Discord puede tardar un tiempo en propagar los comandos globales. Los comandos globales no aparecen tan rápido como los comandos de un servidor de prueba.
 
 ## 🚀 Render
 
@@ -24,7 +36,7 @@ No subas nunca tu `DISCORD_TOKEN` a GitHub.
 2. Conecta el repositorio `izkyro123-hash/NexoCraft-Bot`.
 3. Build Command: `npm install`
 4. Start Command: `npm start`
-5. Configura las variables de entorno del archivo `.env.example`.
+5. Configura las variables de entorno de `.env.example`. Deja `GUILD_ID` vacío.
 6. Haz Deploy.
 
 ## 🤖 Discord Developer Portal
@@ -44,10 +56,10 @@ Para la bienvenida/despedida, activa el intent **Server Members Intent** en el D
 ## 🎫 Tickets
 
 Configura:
-- `TICKET_CATEGORY_ID`: categoría donde se crearán los tickets.
-- `TICKET_SUPPORT_ROLE_ID`: rol que tendrá acceso a los tickets.
-- `MOD_LOG_CHANNEL_ID` o `LOG_CHANNEL_ID`: canal de logs.
+- `TICKET_CATEGORY_ID`: ID de la categoría donde se crearán los tickets.
+- `TICKET_SUPPORT_ROLE_ID`: ID del rol que tendrá acceso a los tickets.
+- `MOD_LOG_CHANNEL_ID` o `LOG_CHANNEL_ID`: ID del canal de logs.
 
 ## ⚠️ Importante
 
-Los comandos se registran como **guild commands** usando `CLIENT_ID` + `GUILD_ID`, por lo que aparecen rápidamente en ese servidor. Si cambias de servidor, cambia `GUILD_ID`.
+Aunque los comandos son globales, la bienvenida, despedida, tickets y logs usan IDs de canales, categorías y roles configurados en el archivo de entorno. Esos IDs son específicos de cada servidor. Para usar esas funciones en varios servidores, habría que adaptar el bot para tener una configuración independiente por servidor.
