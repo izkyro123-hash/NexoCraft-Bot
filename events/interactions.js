@@ -87,7 +87,7 @@ module.exports = async function handleInteraction(interaction, context) {
       return sendLog(interaction.guild, guildConfig, "🧹 Mensajes eliminados", `**Moderador:** ${interaction.user.tag}\n**Cantidad:** ${deleted.size}`, 0xfee75c);
     }
 
-    if (interaction.commandName === "ticket-panel") {
+    if (interaction.commandName === "ticket-panel" || interaction.commandName === "ticket-setup") {
       const embed = new EmbedBuilder()
         .setTitle("🎫 Soporte NexoCraft")
         .setDescription("Pulsa el botón para abrir un ticket privado con el equipo de soporte.")
